@@ -55,6 +55,28 @@ claude mcp add spacemail \
   -- npx -y spacemail-mcp
 ```
 
+<details>
+<summary><b>Keep passwords out of config files (macOS Keychain)</b></summary>
+
+Instead of `SPACEMAIL_PASSWORD`, set `SPACEMAIL_PASSWORD_COMMAND` to a command that prints the password. On a Mac, save the password in your Keychain once (you'll be asked to type it):
+
+```bash
+security add-generic-password -s spacemail-mcp -a hello@yourbusiness.com -w
+```
+
+Then add the server without the password in it:
+
+```bash
+claude mcp add spacemail -s user \
+  -e SPACEMAIL_EMAIL=hello@yourbusiness.com \
+  -e SPACEMAIL_PASSWORD_COMMAND='security find-generic-password -s spacemail-mcp -a hello@yourbusiness.com -w' \
+  -- npx -y spacemail-mcp
+```
+
+The same works with any password manager that has a command-line tool, e.g. `op read "op://Private/Spacemail/password"` for 1Password.
+
+</details>
+
 ### Other apps (Cursor, Windsurf, Claude Desktop by hand, etc.)
 
 Add this to the app's MCP configuration:
@@ -129,6 +151,7 @@ SPACEMAIL_EMAIL=hello@yourbusiness.com SPACEMAIL_PASSWORD='…' npx -y spacemail
 | --- | --- | --- |
 | `SPACEMAIL_EMAIL` / `SPACEMAIL_PASSWORD` | | A single mailbox |
 | `SPACEMAIL_n_EMAIL` / `_PASSWORD` / `_LABEL` / `_NAME` | | Several mailboxes (`n` = 1 to 20). `LABEL` is the nickname, `NAME` is the sender name people see |
+| `SPACEMAIL_PASSWORD_COMMAND`, `SPACEMAIL_n_PASSWORD_COMMAND` | | Instead of a password: a command that prints it, e.g. from the macOS Keychain or 1Password |
 | `SPACEMAIL_ALLOW_SEND` | `false` | Set to `true` to let Claude send mail directly |
 | `SPACEMAIL_SAVE_SENT` | `true` | Save a copy of mail sent by Claude in the Sent folder |
 | `SPACEMAIL_IMAP_HOST` / `_PORT` | `mail.spacemail.com` / `993` | Only change these if Spaceship tells you to |

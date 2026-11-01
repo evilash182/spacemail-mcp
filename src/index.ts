@@ -21,6 +21,7 @@ Settings (environment variables):
   SPACEMAIL_1_EMAIL, SPACEMAIL_1_PASSWORD, ... Several mailboxes (up to 20)
   SPACEMAIL_1_LABEL                            Friendly name, e.g. "BoxCart"
   SPACEMAIL_1_NAME                             Sender name, e.g. "BoxCart Support"
+  SPACEMAIL_1_PASSWORD_COMMAND                 Command that prints the password (e.g. from Keychain)
   SPACEMAIL_ALLOW_SEND=true                    Let Claude send mail (default: drafts only)
 
 Full guide: https://github.com/evilash182/spacemail-mcp#readme

@@ -1,8 +1,11 @@
+import { execSync } from "node:child_process";
+
 /**
  * Reads mailbox settings from environment variables.
  *
  * One mailbox:   SPACEMAIL_EMAIL, SPACEMAIL_PASSWORD, SPACEMAIL_LABEL, SPACEMAIL_NAME
  * Many mailboxes: SPACEMAIL_1_EMAIL, SPACEMAIL_1_PASSWORD, SPACEMAIL_1_LABEL, ... up to SPACEMAIL_20_*
+ * Any PASSWORD can be replaced by PASSWORD_COMMAND, a command that prints the password.
  */
 
 export const MAX_ACCOUNTS = 20;
@@ -62,6 +65,25 @@ function readPort(env: Env, key: string, fallback: number, warnings: string[]): 
   return port;
 }
 
+/**
+ * Runs a command such as `security find-generic-password -s spacemail-mcp -a me@x.com -w`
+ * and uses its output as the password, so passwords can live in the system keychain or a
+ * password manager instead of a config file.
+ */
+function runPasswordCommand(command: string): string {
+  let output: string;
+  try {
+    output = execSync(command, { encoding: "utf8", timeout: 15_000, stdio: ["ignore", "pipe", "pipe"] });
+  } catch (err) {
+    const stderr = String((err as { stderr?: string }).stderr ?? "").trim();
+    if (/could not be found in the keychain/i.test(stderr)) throw new Error("no matching item in the Keychain");
+    throw new Error(stderr.split("\n")[0] || "the command failed");
+  }
+  const password = output.replace(/\r?\n$/, "");
+  if (!password) throw new Error("the command printed nothing");
+  return password;
+}
+
 export function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -84,14 +106,23 @@ export function loadConfig(env: Env = process.env): Config {
 
   for (const prefix of prefixes) {
     const email = read(env, `${prefix}EMAIL`) ?? read(env, `${prefix}USER`);
-    const password = read(env, `${prefix}PASSWORD`);
-    if (!email && !password) continue;
+    const passwordCommand = read(env, `${prefix}PASSWORD_COMMAND`);
+    if (!email && !read(env, `${prefix}PASSWORD`) && !passwordCommand) continue;
     if (!email) {
       warnings.push(`${prefix}PASSWORD is set but ${prefix}EMAIL is missing, so that mailbox was skipped.`);
       continue;
     }
+    let password = read(env, `${prefix}PASSWORD`);
+    if (!password && passwordCommand) {
+      try {
+        password = runPasswordCommand(passwordCommand);
+      } catch (err) {
+        warnings.push(`Couldn't get the password for ${email} from ${prefix}PASSWORD_COMMAND: ${(err as Error).message}`);
+        continue;
+      }
+    }
     if (!password) {
-      warnings.push(`${email} has no password (${prefix}PASSWORD), so it was skipped.`);
+      warnings.push(`${email} has no password (${prefix}PASSWORD or ${prefix}PASSWORD_COMMAND), so it was skipped.`);
       continue;
     }
     if (!email.includes("@")) {

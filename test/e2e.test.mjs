@@ -367,6 +367,21 @@ describe("sending enabled", () => {
   });
 });
 
+describe("passwords from a command (e.g. the macOS Keychain)", () => {
+  it("uses the command's output as the password and reports failures", async () => {
+    const client = await startClient({
+      SPACEMAIL_1_PASSWORD: "",
+      SPACEMAIL_1_PASSWORD_COMMAND: `printf '%s\\n' '${PASS}'`,
+      SPACEMAIL_2_PASSWORD: "",
+      SPACEMAIL_2_PASSWORD_COMMAND: "echo 'item not found' >&2; exit 44",
+    });
+    const { text } = await call(client, "test_connection");
+    assert.match(text, /✓ BoxCart <hello@boxcart\.test>: connected/);
+    assert.match(text, /Couldn't get the password for hello@speakeasy\.test from SPACEMAIL_2_PASSWORD_COMMAND: item not found/);
+    await client.close();
+  });
+});
+
 describe("no mailboxes configured", () => {
   it("explains how to set up instead of failing", async () => {
     const client = await startClient({ SPACEMAIL_1_EMAIL: "", SPACEMAIL_1_PASSWORD: "", SPACEMAIL_2_EMAIL: "", SPACEMAIL_2_PASSWORD: "" });
