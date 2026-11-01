@@ -48,7 +48,7 @@ async function run(work: () => Promise<string>): Promise<CallToolResult> {
 
 const SETUP_HELP =
   "No Spacemail mailboxes are set up yet. Add your mailbox email address and password in the extension settings " +
-  "(Claude Desktop → Settings → Extensions → Spacemail), or set SPACEMAIL_EMAIL and SPACEMAIL_PASSWORD.";
+  "(Claude Desktop → Settings → Extensions → Spacemail by NWD), or set SPACEMAIL_EMAIL and SPACEMAIL_PASSWORD.";
 
 function pickAccount(config: Config, requested: string | undefined): Account {
   const { accounts } = config;

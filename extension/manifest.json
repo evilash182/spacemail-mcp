@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/anthropics/mcpb/main/schemas/mcpb-manifest-v0.4.schema.json",
   "manifest_version": "0.4",
   "name": "spacemail-mcp",
-  "display_name": "Spacemail",
+  "display_name": "Spacemail by NWD",
   "version": "0.0.0",
   "description": "Let Claude check, search, read and draft replies in your Spacemail inboxes from Spaceship.",
   "long_description": "Connect one or more Spacemail mailboxes so you can ask Claude things like \"has anything come in on BoxCart today?\" or \"draft a friendly reply to Jane's question\".\n\n**Safe by default.** Claude writes replies as drafts in your Drafts folder so you can check them before they go. Direct sending is off unless you switch it on, and nothing is ever permanently deleted (deleting moves mail to Trash).\n\n**Private.** Your passwords are kept in your computer's secure keychain and go only to Spacemail's own mail servers. There is no middleman server.\n\nBuilt and maintained by Norwich Website Design. Not affiliated with or endorsed by Spaceship.",

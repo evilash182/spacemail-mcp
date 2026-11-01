@@ -1,6 +1,6 @@
 {
   "name": "spacemail-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server that lets Claude and other AI assistants check, search, read and draft emails in Spacemail (Spaceship) mailboxes.",
   "keywords": [
     "mcp",

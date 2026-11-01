@@ -44,7 +44,7 @@ Spacemail is the affordable business email from Spaceship. This extension connec
 1. Download **[spacemail.mcpb](https://github.com/evilash182/spacemail-mcp/releases/latest/download/spacemail.mcpb)** (from the [latest release](https://github.com/evilash182/spacemail-mcp/releases/latest)).
 2. Double-click it. Claude Desktop opens and shows an install screen.
 3. Enter your Spacemail address and password, and optionally a nickname like "BoxCart". Add up to three mailboxes.
-4. Click **Install**, then ask Claude: *"Test my Spacemail connection."*
+4. Click **Install**. It appears as **Spacemail by NWD** in your extensions. Then ask Claude: *"Test my Spacemail connection."*
 
 ### Claude Code
 
@@ -142,7 +142,7 @@ SPACEMAIL_EMAIL=hello@yourbusiness.com SPACEMAIL_PASSWORD='…' npx -y spacemail
 
 **"There's no message with id …"**: ids change when mail is moved. Ask Claude to search again.
 
-**Claude can't see the tools**: restart Claude Desktop after installing, and check the extension is switched on under **Settings → Extensions**.
+**Claude can't see the tools**: restart Claude Desktop after installing, and check **Spacemail by NWD** is switched on under **Settings → Extensions**.
 
 Still stuck? [Open an issue](https://github.com/evilash182/spacemail-mcp/issues) and we'll take a look.
 
