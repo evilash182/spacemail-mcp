@@ -1,0 +1,201 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/mcpb/main/schemas/mcpb-manifest-v0.4.schema.json",
+  "manifest_version": "0.4",
+  "name": "spacemail-mcp",
+  "display_name": "Spacemail",
+  "version": "0.0.0",
+  "description": "Let Claude check, search, read and draft replies in your Spacemail inboxes from Spaceship.",
+  "long_description": "Connect one or more Spacemail mailboxes so you can ask Claude things like \"has anything come in on BoxCart today?\" or \"draft a friendly reply to Jane's question\".\n\n**Safe by default.** Claude writes replies as drafts in your Drafts folder so you can check them before they go. Direct sending is off unless you switch it on, and nothing is ever permanently deleted (deleting moves mail to Trash).\n\n**Private.** Your passwords are kept in your computer's secure keychain and go only to Spacemail's own mail servers. There is no middleman server.\n\nBuilt and maintained by Norwich Website Design. Not affiliated with or endorsed by Spaceship.",
+  "author": {
+    "name": "Norwich Website Design",
+    "email": "hello@norwichwebsite.design",
+    "url": "https://norwichwebsite.design"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evilash182/spacemail-mcp.git"
+  },
+  "homepage": "https://norwichwebsite.design",
+  "documentation": "https://github.com/evilash182/spacemail-mcp#readme",
+  "support": "https://github.com/evilash182/spacemail-mcp/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.cjs",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/server/index.cjs"
+      ],
+      "env": {
+        "SPACEMAIL_1_EMAIL": "${user_config.account_1_email}",
+        "SPACEMAIL_1_PASSWORD": "${user_config.account_1_password}",
+        "SPACEMAIL_1_LABEL": "${user_config.account_1_label}",
+        "SPACEMAIL_1_NAME": "${user_config.account_1_sender_name}",
+        "SPACEMAIL_2_EMAIL": "${user_config.account_2_email}",
+        "SPACEMAIL_2_PASSWORD": "${user_config.account_2_password}",
+        "SPACEMAIL_2_LABEL": "${user_config.account_2_label}",
+        "SPACEMAIL_2_NAME": "${user_config.account_2_sender_name}",
+        "SPACEMAIL_3_EMAIL": "${user_config.account_3_email}",
+        "SPACEMAIL_3_PASSWORD": "${user_config.account_3_password}",
+        "SPACEMAIL_3_LABEL": "${user_config.account_3_label}",
+        "SPACEMAIL_3_NAME": "${user_config.account_3_sender_name}",
+        "SPACEMAIL_ALLOW_SEND": "${user_config.allow_send}"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "check_inbox",
+      "description": "See what's new across all your mailboxes, with previews"
+    },
+    {
+      "name": "search_emails",
+      "description": "Find emails by sender, subject, words or date"
+    },
+    {
+      "name": "read_email",
+      "description": "Open an email, including its attachments list"
+    },
+    {
+      "name": "draft_reply",
+      "description": "Write a threaded reply and save it to Drafts"
+    },
+    {
+      "name": "create_draft",
+      "description": "Write a new email and save it to Drafts"
+    },
+    {
+      "name": "update_emails",
+      "description": "Mark emails read or unread, flag or unflag them"
+    },
+    {
+      "name": "move_emails",
+      "description": "Archive, move or bin emails (never permanently deletes)"
+    },
+    {
+      "name": "list_folders",
+      "description": "List folders with message and unread counts"
+    },
+    {
+      "name": "list_mailboxes",
+      "description": "Show which mailboxes are connected"
+    },
+    {
+      "name": "test_connection",
+      "description": "Check your mailbox settings work"
+    },
+    {
+      "name": "send_email",
+      "description": "Send a new email (only when sending is switched on)"
+    },
+    {
+      "name": "send_reply",
+      "description": "Send a threaded reply (only when sending is switched on)"
+    }
+  ],
+  "keywords": [
+    "spacemail",
+    "spaceship",
+    "email",
+    "imap",
+    "smtp",
+    "inbox",
+    "drafts"
+  ],
+  "license": "MIT",
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=20.0.0"
+    }
+  },
+  "user_config": {
+    "account_1_email": {
+      "type": "string",
+      "title": "Mailbox 1: email address",
+      "description": "Your full Spacemail address, e.g. hello@yourbusiness.com",
+      "required": true
+    },
+    "account_1_password": {
+      "type": "string",
+      "title": "Mailbox 1: password",
+      "description": "The mailbox password (the one you use for Spacemail webmail, not your Spaceship account password). Stored in your system keychain.",
+      "sensitive": true,
+      "required": true
+    },
+    "account_1_label": {
+      "type": "string",
+      "title": "Mailbox 1: nickname (optional)",
+      "description": "A short name to refer to it by, e.g. \"BoxCart\". Defaults to the domain name.",
+      "required": false
+    },
+    "account_1_sender_name": {
+      "type": "string",
+      "title": "Mailbox 1: sender name (optional)",
+      "description": "The name people see on emails you send, e.g. \"BoxCart Support\".",
+      "required": false
+    },
+    "account_2_email": {
+      "type": "string",
+      "title": "Mailbox 2: email address (optional)",
+      "description": "Add a second Spacemail mailbox. Leave blank if you only have one.",
+      "required": false
+    },
+    "account_2_password": {
+      "type": "string",
+      "title": "Mailbox 2: password",
+      "description": "Password for the second mailbox.",
+      "sensitive": true,
+      "required": false
+    },
+    "account_2_label": {
+      "type": "string",
+      "title": "Mailbox 2: nickname (optional)",
+      "description": "e.g. \"Speakeasy\".",
+      "required": false
+    },
+    "account_2_sender_name": {
+      "type": "string",
+      "title": "Mailbox 2: sender name (optional)",
+      "description": "The name people see on emails from this mailbox.",
+      "required": false
+    },
+    "account_3_email": {
+      "type": "string",
+      "title": "Mailbox 3: email address (optional)",
+      "description": "Add a third Spacemail mailbox. Need more? See the documentation.",
+      "required": false
+    },
+    "account_3_password": {
+      "type": "string",
+      "title": "Mailbox 3: password",
+      "description": "Password for the third mailbox.",
+      "sensitive": true,
+      "required": false
+    },
+    "account_3_label": {
+      "type": "string",
+      "title": "Mailbox 3: nickname (optional)",
+      "description": "A short name for the third mailbox.",
+      "required": false
+    },
+    "account_3_sender_name": {
+      "type": "string",
+      "title": "Mailbox 3: sender name (optional)",
+      "description": "The name people see on emails from this mailbox.",
+      "required": false
+    },
+    "allow_send": {
+      "type": "boolean",
+      "title": "Allow Claude to send emails directly",
+      "description": "Off (recommended): Claude saves replies as drafts for you to check and send. On: Claude can also send emails when you ask it to.",
+      "default": false,
+      "required": false
+    }
+  }
+}

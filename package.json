@@ -1,0 +1,65 @@
+{
+  "name": "spacemail-mcp",
+  "version": "0.1.0",
+  "description": "MCP server that lets Claude and other AI assistants check, search, read and draft emails in Spacemail (Spaceship) mailboxes.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "spacemail",
+    "spaceship",
+    "email",
+    "imap",
+    "smtp",
+    "ai"
+  ],
+  "author": {
+    "name": "Norwich Website Design",
+    "email": "hello@norwichwebsite.design",
+    "url": "https://norwichwebsite.design"
+  },
+  "license": "MIT",
+  "homepage": "https://norwichwebsite.design",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evilash182/spacemail-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/evilash182/spacemail-mcp/issues"
+  },
+  "type": "module",
+  "bin": {
+    "spacemail-mcp": "dist/index.cjs"
+  },
+  "files": [
+    "assets/icon.png",
+    "dist/index.cjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p .",
+    "test": "npm run build && node --test --test-timeout=30000 \"test/*.test.mjs\"",
+    "build:extension": "npm run build && node build-extension.mjs",
+    "prepublishOnly": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@anthropic-ai/mcpb": "^2.1.2",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@types/mailparser": "^3.9.0",
+    "@types/node": "^26.6.6",
+    "@types/smtp-server": "^3.5.13",
+    "esbuild": "^0.28.2",
+    "hoodiecrow-imap": "^3.3.1",
+    "imapflow": "^2.10.0",
+    "mailparser": "^3.14.1",
+    "nodemailer": "^10.3.1",
+    "smtp-server": "^3.21.3",
+    "typescript": "^7.0.2",
+    "zod": "^4.6.7"
+  }
+}
