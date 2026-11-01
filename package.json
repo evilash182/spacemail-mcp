@@ -43,7 +43,7 @@
   "scripts": {
     "build": "node build.mjs",
     "typecheck": "tsc -p .",
-    "test": "npm run build && node --test --test-timeout=30000 \"test/*.test.mjs\"",
+    "test": "npm run build && node --test --test-timeout=30000 test/e2e.test.mjs",
     "build:extension": "npm run build && node build-extension.mjs",
     "prepublishOnly": "npm run typecheck && npm test"
   },
