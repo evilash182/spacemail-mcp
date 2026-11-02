@@ -62,6 +62,12 @@ Run the same command again any time to add, rename or remove mailboxes, change a
 npx -y spacemail-mcp check
 ```
 
+Or install it as a Claude Code plugin, which asks for up to two mailboxes in a form and adds an email assistant skill:
+
+```
+/plugin install spacemail-by-nwd --marketplace evilash182/spacemail-mcp
+```
+
 <details>
 <summary><b>Prefer to set it up by hand?</b></summary>
 

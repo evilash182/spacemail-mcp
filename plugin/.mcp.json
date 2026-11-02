@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "spacemail": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "spacemail-mcp@1.0.1"
+      ],
+      "env": {
+        "SPACEMAIL_1_EMAIL": "${user_config.mailbox_1_email}",
+        "SPACEMAIL_1_PASSWORD": "${user_config.mailbox_1_password}",
+        "SPACEMAIL_1_LABEL": "${user_config.mailbox_1_label}",
+        "SPACEMAIL_2_EMAIL": "${user_config.mailbox_2_email}",
+        "SPACEMAIL_2_PASSWORD": "${user_config.mailbox_2_password}",
+        "SPACEMAIL_2_LABEL": "${user_config.mailbox_2_label}",
+        "SPACEMAIL_ALLOW_SEND": "${user_config.allow_send}"
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "name": "spacemail-by-nwd",
+  "displayName": "Spacemail by NWD",
+  "version": "1.0.1",
+  "description": "Check, search, read and draft replies to your Spacemail (Spaceship) business emails, across several mailboxes. Replies are saved as drafts unless you turn sending on.",
+  "author": {
+    "name": "Norwich Website Design",
+    "email": "hello@norwichwebsite.design",
+    "url": "https://norwichwebsite.design"
+  },
+  "homepage": "https://norwichwebsite.design/tools/spacemail-for-claude/",
+  "repository": "https://github.com/evilash182/spacemail-mcp",
+  "license": "MIT",
+  "keywords": [
+    "email",
+    "spacemail",
+    "spaceship",
+    "imap",
+    "inbox",
+    "drafts"
+  ],
+  "icon": "./icon.png",
+  "documentationUrl": "https://github.com/evilash182/spacemail-mcp#readme",
+  "supportUrl": "https://github.com/evilash182/spacemail-mcp/issues",
+  "privacyPolicyUrl": "https://norwichwebsite.design/tools/spacemail-for-claude/#privacy",
+  "userConfig": {
+    "mailbox_1_email": {
+      "type": "string",
+      "title": "Email address",
+      "description": "Your Spacemail address, e.g. hello@yourbusiness.com.",
+      "required": true
+    },
+    "mailbox_1_password": {
+      "type": "string",
+      "title": "Password",
+      "description": "The mailbox password (not your Spaceship account password). Stored in your system's secure credential store.",
+      "sensitive": true,
+      "required": true
+    },
+    "mailbox_1_label": {
+      "type": "string",
+      "title": "Nickname (optional)",
+      "description": "A short name for this mailbox, e.g. Support. Leave blank to use the domain name.",
+      "default": ""
+    },
+    "mailbox_2_email": {
+      "type": "string",
+      "title": "Second mailbox: email address (optional)",
+      "description": "Another Spacemail address to connect. Leave blank if you only have one.",
+      "default": ""
+    },
+    "mailbox_2_password": {
+      "type": "string",
+      "title": "Second mailbox: password (optional)",
+      "description": "The password for the second mailbox.",
+      "sensitive": true,
+      "default": ""
+    },
+    "mailbox_2_label": {
+      "type": "string",
+      "title": "Second mailbox: nickname (optional)",
+      "description": "A short name for the second mailbox, e.g. Sales.",
+      "default": ""
+    },
+    "allow_send": {
+      "type": "boolean",
+      "title": "Allow Claude to send emails",
+      "description": "Off by default: Claude saves replies as drafts for you to check and send. Turn on to let Claude send when you ask it to.",
+      "default": false
+    }
+  }
+}

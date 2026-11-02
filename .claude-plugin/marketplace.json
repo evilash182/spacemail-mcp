@@ -1,0 +1,18 @@
+{
+  "name": "spacemail-mcp",
+  "owner": {
+    "name": "Norwich Website Design",
+    "email": "hello@norwichwebsite.design",
+    "url": "https://norwichwebsite.design"
+  },
+  "metadata": {
+    "description": "Spacemail by NWD: connect Spacemail (Spaceship) business email to Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "spacemail-by-nwd",
+      "source": "./plugin",
+      "description": "Check, search, read and draft replies to your Spacemail business emails, across several mailboxes."
+    }
+  ]
+}

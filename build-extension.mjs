@@ -28,4 +28,12 @@ for (const p of server.packages) p.version = pkg.version;
 bundle.identifier = `https://github.com/evilash182/spacemail-mcp/releases/download/v${pkg.version}/spacemail.mcpb`;
 bundle.fileSha256 = createHash("sha256").update(readFileSync(out)).digest("hex");
 writeFileSync("server.json", `${JSON.stringify(server, null, 2)}\n`);
+
+// The Claude plugin runs the npm package pinned to this exact version, as the plugin directory requires.
+const plugin = JSON.parse(readFileSync("plugin/.claude-plugin/plugin.json", "utf8"));
+plugin.version = pkg.version;
+writeFileSync("plugin/.claude-plugin/plugin.json", `${JSON.stringify(plugin, null, 2)}\n`);
+const mcp = JSON.parse(readFileSync("plugin/.mcp.json", "utf8"));
+mcp.mcpServers.spacemail.args = ["-y", `spacemail-mcp@${pkg.version}`];
+writeFileSync("plugin/.mcp.json", `${JSON.stringify(mcp, null, 2)}\n`);
 console.log(`\nExtension ready: ${out}`);

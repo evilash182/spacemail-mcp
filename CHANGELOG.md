@@ -3,6 +3,7 @@
 ## 1.0.1 (2026-11-02)
 
 - Listed in the official MCP Registry as `design.norwichwebsite/spacemail`.
+- New Claude Code plugin, **Spacemail by NWD**: `/plugin install spacemail-by-nwd --marketplace evilash182/spacemail-mcp`. It asks for up to two mailboxes in a form, stores passwords in Claude Code's secure storage, and adds an email assistant skill.
 
 ## 1.0.0 (2026-11-02)
 
