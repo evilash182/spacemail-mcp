@@ -1,5 +1,6 @@
 // Builds the one-click Claude Desktop extension (.mcpb) from the bundled server.
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
@@ -18,4 +19,13 @@ cpSync("LICENSE", `${stage}/LICENSE`);
 const out = `build/spacemail-${pkg.version}.mcpb`;
 execFileSync("npx", ["mcpb", "validate", `${stage}/manifest.json`], { stdio: "inherit" });
 execFileSync("npx", ["mcpb", "pack", stage, out], { stdio: "inherit" });
+
+// The MCP Registry entry points at this exact file, so record its version and hash there.
+const server = JSON.parse(readFileSync("server.json", "utf8"));
+const bundle = server.packages.find((p) => p.registryType === "mcpb");
+server.version = pkg.version;
+for (const p of server.packages) p.version = pkg.version;
+bundle.identifier = `https://github.com/evilash182/spacemail-mcp/releases/download/v${pkg.version}/spacemail.mcpb`;
+bundle.fileSha256 = createHash("sha256").update(readFileSync(out)).digest("hex");
+writeFileSync("server.json", `${JSON.stringify(server, null, 2)}\n`);
 console.log(`\nExtension ready: ${out}`);

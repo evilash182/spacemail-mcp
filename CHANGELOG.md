@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1 (2026-11-02)
+
+- Listed in the official MCP Registry as `design.norwichwebsite/spacemail`.
+
 ## 1.0.0 (2026-11-02)
 
 First public release.

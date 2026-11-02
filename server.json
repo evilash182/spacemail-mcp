@@ -1,0 +1,71 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "design.norwichwebsite/spacemail",
+  "title": "Spacemail by NWD",
+  "description": "Check, search, read and draft replies to Spacemail (Spaceship) emails, across several mailboxes.",
+  "version": "1.0.1",
+  "websiteUrl": "https://norwichwebsite.design/tools/spacemail-for-claude/",
+  "repository": {
+    "url": "https://github.com/evilash182/spacemail-mcp",
+    "source": "github"
+  },
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/evilash182/spacemail-mcp/main/assets/icon.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    }
+  ],
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "spacemail-mcp",
+      "version": "1.0.1",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SPACEMAIL_EMAIL",
+          "description": "Your Spacemail address. For more mailboxes use SPACEMAIL_1_EMAIL, SPACEMAIL_2_EMAIL and so on.",
+          "format": "string",
+          "isRequired": true,
+          "placeholder": "hello@yourbusiness.com"
+        },
+        {
+          "name": "SPACEMAIL_PASSWORD",
+          "description": "The mailbox password (not your Spaceship account password).",
+          "format": "string",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "SPACEMAIL_LABEL",
+          "description": "A short nickname for the mailbox, e.g. Support.",
+          "format": "string",
+          "isRequired": false
+        },
+        {
+          "name": "SPACEMAIL_ALLOW_SEND",
+          "description": "Set to true to let Claude send emails. Off by default, so replies are saved as drafts.",
+          "format": "boolean",
+          "isRequired": false,
+          "default": "false"
+        }
+      ]
+    },
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/evilash182/spacemail-mcp/releases/download/v1.0.1/spacemail.mcpb",
+      "version": "1.0.1",
+      "fileSha256": "9fddd5945c46550058b5fd81121c3db9773f157fc1664654a97527ad3a1431c7",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
