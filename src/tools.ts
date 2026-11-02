@@ -283,7 +283,7 @@ export function registerTools(server: McpServer, config: Config): void {
       title: "Check inbox",
       description:
         "Quick look at what's arrived: lists recent inbox messages across all mailboxes (or one), newest first, with a short preview. " +
-        'Best tool for "has anything come in today?" or "any new BoxCart emails?".',
+        'Best tool for "has anything come in today?" or "any new emails in the support inbox?".',
       inputSchema: {
         account: accountParam.describe("Mailbox to check. Leave out (or use \"all\") to check every mailbox."),
         unread_only: z.boolean().default(true).describe("Only show unread messages. Defaults to true."),

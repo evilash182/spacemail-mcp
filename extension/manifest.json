@@ -5,7 +5,7 @@
   "display_name": "Spacemail by NWD",
   "version": "0.0.0",
   "description": "Let Claude check, search, read and draft replies in your Spacemail inboxes from Spaceship.",
-  "long_description": "Connect one or more Spacemail mailboxes so you can ask Claude things like \"has anything come in on BoxCart today?\" or \"draft a friendly reply to Jane's question\".\n\n**Safe by default.** Claude writes replies as drafts in your Drafts folder so you can check them before they go. Direct sending is off unless you switch it on, and nothing is ever permanently deleted (deleting moves mail to Trash).\n\n**Private.** Your passwords are kept in your computer's secure keychain and go only to Spacemail's own mail servers. There is no middleman server.\n\nBuilt and maintained by Norwich Website Design. Not affiliated with or endorsed by Spaceship.",
+  "long_description": "Connect one or more Spacemail mailboxes so you can ask Claude things like \"has anything come in on the support inbox today?\" or \"draft a friendly reply to that customer's question\".\n\n**Safe by default.** Claude writes replies as drafts in your Drafts folder so you can check them before they go. Direct sending is off unless you switch it on, and nothing is ever permanently deleted (deleting moves mail to Trash).\n\n**Private.** Your passwords are kept in your computer's secure keychain and go only to Spacemail's own mail servers. There is no middleman server.\n\nBuilt and maintained by Norwich Website Design. Not affiliated with or endorsed by Spaceship.",
   "author": {
     "name": "Norwich Website Design",
     "email": "hello@norwichwebsite.design",
@@ -131,13 +131,13 @@
     "account_1_label": {
       "type": "string",
       "title": "Mailbox 1: nickname (optional)",
-      "description": "A short name to refer to it by, e.g. \"BoxCart\". Defaults to the domain name.",
+      "description": "A short name to refer to it by, e.g. \"Support\". Defaults to the domain name.",
       "required": false
     },
     "account_1_sender_name": {
       "type": "string",
       "title": "Mailbox 1: sender name (optional)",
-      "description": "The name people see on emails you send, e.g. \"BoxCart Support\".",
+      "description": "The name people see on emails you send, e.g. \"Your Business Support\".",
       "required": false
     },
     "account_2_email": {
@@ -156,7 +156,7 @@
     "account_2_label": {
       "type": "string",
       "title": "Mailbox 2: nickname (optional)",
-      "description": "e.g. \"Speakeasy\".",
+      "description": "e.g. \"Sales\".",
       "required": false
     },
     "account_2_sender_name": {

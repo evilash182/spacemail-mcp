@@ -11,12 +11,12 @@ import { ImapFlow } from "imapflow";
 const require = createRequire(import.meta.url);
 const hoodiecrow = require("hoodiecrow-imap");
 
-const USER = "hello@boxcart.test";
+const USER = "support@example.test";
 const PASS = "correct-horse";
 
 const plainMessage = [
   "From: Jane Smith <jane@example.com>",
-  `To: BoxCart <${USER}>`,
+  `To: Support <${USER}>`,
   "Cc: Bob <bob@example.com>",
   "Subject: Question about the Pro plan",
   "Message-ID: <q1@example.com>",
@@ -31,10 +31,10 @@ const plainMessage = [
 ].join("\r\n");
 
 const htmlWithAttachment = [
-  "From: Stripe <receipts@stripe.test>",
+  "From: Payments <receipts@payments.test>",
   `To: ${USER}`,
   "Subject: Your receipt",
-  "Message-ID: <r1@stripe.test>",
+  "Message-ID: <r1@payments.test>",
   "Date: Fri, 30 Oct 2026 12:00:00 +0000",
   "MIME-Version: 1.0",
   'Content-Type: multipart/mixed; boundary="b1"',
@@ -97,11 +97,11 @@ async function startClient(extraEnv = {}) {
       SPACEMAIL_INSECURE_PLAINTEXT: "true",
       SPACEMAIL_1_EMAIL: USER,
       SPACEMAIL_1_PASSWORD: PASS,
-      SPACEMAIL_1_LABEL: "BoxCart",
-      SPACEMAIL_1_NAME: "BoxCart Support",
-      SPACEMAIL_2_EMAIL: "hello@speakeasy.test",
+      SPACEMAIL_1_LABEL: "Support",
+      SPACEMAIL_1_NAME: "Example Support",
+      SPACEMAIL_2_EMAIL: "sales@example.test",
       SPACEMAIL_2_PASSWORD: "wrong-password",
-      SPACEMAIL_2_LABEL: "Speakeasy",
+      SPACEMAIL_2_LABEL: "Sales",
       // Simulates an optional Claude Desktop field the user left empty.
       SPACEMAIL_3_EMAIL: "${user_config.account_3_email}",
       ...extraEnv,
@@ -197,43 +197,43 @@ describe("drafts-only mode (default)", () => {
 
   it("lists mailboxes and ignores unfilled optional fields", async () => {
     const { text } = await call(client, "list_mailboxes");
-    assert.match(text, /BoxCart: hello@boxcart\.test \(sends as "BoxCart Support"\)/);
-    assert.match(text, /Speakeasy: hello@speakeasy\.test/);
+    assert.match(text, /Support: support@example\.test \(sends as "Example Support"\)/);
+    assert.match(text, /Sales: sales@example\.test/);
     assert.match(text, /Sending is OFF/);
     assert.doesNotMatch(text, /user_config/);
   });
 
   it("reports a good mailbox and a wrong password in plain English", async () => {
     const { text } = await call(client, "test_connection");
-    assert.match(text, /✓ BoxCart <hello@boxcart\.test>: connected\. Inbox has 2 messages, 1 unread\./);
-    assert.match(text, /✗ Speakeasy <hello@speakeasy\.test>: Spacemail rejected the email address or password/);
+    assert.match(text, /✓ Support <support@example\.test>: connected\. Inbox has 2 messages, 1 unread\./);
+    assert.match(text, /✗ Sales <sales@example\.test>: Spacemail rejected the email address or password/);
   });
 
   it("checks unread mail across every mailbox, with previews", async () => {
     const { text, isError } = await call(client, "check_inbox");
     assert.equal(isError, false);
-    assert.match(text, /## BoxCart <hello@boxcart\.test> \(1 unread\)/);
+    assert.match(text, /## Support <support@example\.test> \(1 unread\)/);
     assert.match(text, /from Jane Smith <jane@example\.com> · \[UNREAD\]/);
     assert.match(text, /Subject: Question about the Pro plan/);
     assert.match(text, /Preview: Hi there, Does the Pro plan include multiple delivery zones\?/);
-    assert.match(text, /## Speakeasy <hello@speakeasy\.test>\nCouldn't check this mailbox/);
+    assert.match(text, /## Sales <sales@example\.test>\nCouldn't check this mailbox/);
   });
 
   it("needs a mailbox name when several are configured", async () => {
     const { text, isError } = await call(client, "search_emails", { subject: "receipt" });
     assert.equal(isError, true);
-    assert.match(text, /Which mailbox\? Choose one of: "BoxCart", "Speakeasy"/);
+    assert.match(text, /Which mailbox\? Choose one of: "Support", "Sales"/);
   });
 
   it("searches by subject and builds previews from HTML-only mail", async () => {
-    const { text } = await call(client, "search_emails", { account: "boxcart", subject: "receipt" });
-    assert.match(text, /BoxCart <hello@boxcart\.test> › INBOX \(1 matches\)/);
-    assert.match(text, /- id 1 · .* · from Stripe <receipts@stripe\.test> · \[attachment\]/);
+    const { text } = await call(client, "search_emails", { account: "support", subject: "receipt" });
+    assert.match(text, /Support <support@example\.test> › INBOX \(1 matches\)/);
+    assert.match(text, /- id 1 · .* · from Payments <receipts@payments\.test> · \[attachment\]/);
     assert.match(text, /Preview: Thanks for your payment of/);
   });
 
   it("reads a message without marking it read", async () => {
-    const { text } = await call(client, "read_email", { account: "BoxCart", id: 2 });
+    const { text } = await call(client, "read_email", { account: "Support", id: 2 });
     assert.match(text, /From: "Jane Smith" <jane@example\.com>/);
     assert.match(text, /Cc: "Bob" <bob@example\.com>/);
     assert.match(text, /Status: unread/);
@@ -244,24 +244,24 @@ describe("drafts-only mode (default)", () => {
   });
 
   it("lists attachments", async () => {
-    const { text } = await call(client, "read_email", { account: "BoxCart", id: 1 });
+    const { text } = await call(client, "read_email", { account: "Support", id: 1 });
     assert.match(text, /Attachments: receipt\.pdf \(application\/pdf, 1 KB\)/);
   });
 
   it("saves a threaded reply-all draft", async () => {
     const { text, isError } = await call(client, "draft_reply", {
-      account: "BoxCart",
+      account: "Support",
       id: 2,
-      body: "Hi Jane,\n\nYes, Pro supports unlimited zones.\n\nAsh",
+      body: "Hi Jane,\n\nYes, Pro supports unlimited zones.\n\nAlex",
       reply_all: true,
     });
     assert.equal(isError, false, text);
-    assert.match(text, /Reply saved as a draft in BoxCart › Drafts/);
+    assert.match(text, /Reply saved as a draft in Support › Drafts/);
     assert.match(text, /To: jane@example\.com\nCc: bob@example\.com/);
 
     const [draft] = await folderContents("Drafts");
     assert.ok(draft.flags.has("\\Draft"));
-    assert.match(draft.source, /^From: "?BoxCart Support"? <hello@boxcart\.test>/m);
+    assert.match(draft.source, /^From: "?Example Support"? <support@example\.test>/m);
     assert.match(draft.source, /^Subject: Re: Question about the Pro plan/m);
     assert.match(draft.source, /^In-Reply-To: <q1@example\.com>/m);
     assert.match(draft.source, /^References: <q1@example\.com>/m);
@@ -270,54 +270,54 @@ describe("drafts-only mode (default)", () => {
 
   it("saves a new draft, keeping Bcc", async () => {
     const { text } = await call(client, "create_draft", {
-      account: "BoxCart",
+      account: "Support",
       to: ["Sam Lee <sam@example.com>"],
       bcc: ["accounts@example.com"],
-      subject: "Welcome to BoxCart",
+      subject: "Welcome aboard",
       body: "Hi Sam,\n\nWelcome aboard!",
     });
-    assert.match(text, /Draft saved in BoxCart › Drafts\.\nTo: "Sam Lee" <sam@example\.com>\nBcc: accounts@example\.com/);
+    assert.match(text, /Draft saved in Support › Drafts\.\nTo: "Sam Lee" <sam@example\.com>\nBcc: accounts@example\.com/);
     const drafts = await folderContents("Drafts");
     assert.equal(drafts.length, 2);
     assert.match(drafts[1].source, /^Bcc: accounts@example\.com/m);
   });
 
   it("rejects invalid addresses before touching the server", async () => {
-    const { text, isError } = await call(client, "create_draft", { account: "BoxCart", to: ["not-an-email"], subject: "x", body: "y" });
+    const { text, isError } = await call(client, "create_draft", { account: "Support", to: ["not-an-email"], subject: "x", body: "y" });
     assert.equal(isError, true);
     assert.match(text, /"not-an-email" in to isn't a valid email address/);
   });
 
   it("marks and flags messages", async () => {
-    await call(client, "update_emails", { account: "BoxCart", ids: [2], action: "flag" });
-    const { text } = await call(client, "update_emails", { account: "BoxCart", ids: [2], action: "mark_read" });
-    assert.match(text, /Marked as read: 1 message in BoxCart › INBOX/);
+    await call(client, "update_emails", { account: "Support", ids: [2], action: "flag" });
+    const { text } = await call(client, "update_emails", { account: "Support", ids: [2], action: "mark_read" });
+    assert.match(text, /Marked as read: 1 message in Support › INBOX/);
     const msg = (await folderContents("INBOX")).find((m) => m.uid === 2);
     assert.ok(msg.flags.has("\\Seen") && msg.flags.has("\\Flagged"));
   });
 
   it("lists folders with counts", async () => {
-    const { text } = await call(client, "list_folders", { account: "BoxCart" });
+    const { text } = await call(client, "list_folders", { account: "Support" });
     assert.match(text, /- INBOX: 2 messages, 0 unread/);
     assert.match(text, /- Drafts \(drafts\): 2 messages/);
     assert.match(text, /- Trash \(trash\): 0 messages/);
   });
 
   it("explains unknown folders and lists real ones", async () => {
-    const { text, isError } = await call(client, "search_emails", { account: "BoxCart", folder: "Clients" });
+    const { text, isError } = await call(client, "search_emails", { account: "Support", folder: "Clients" });
     assert.equal(isError, true);
     assert.match(text, /There's no folder called "Clients"\. Available folders: INBOX, Sent \(sent\), Drafts \(drafts\), Archive \(archive\), Trash \(trash\)\./);
   });
 
   it("moves to trash by friendly name", async () => {
-    const { text } = await call(client, "move_emails", { account: "BoxCart", ids: [1], destination: "trash" });
-    assert.match(text, /Moved 1 message from INBOX to Trash in BoxCart/);
+    const { text } = await call(client, "move_emails", { account: "Support", ids: [1], destination: "trash" });
+    assert.match(text, /Moved 1 message from INBOX to Trash in Support/);
     assert.equal((await folderContents("Trash")).length, 1);
     assert.equal((await folderContents("INBOX")).length, 1);
   });
 
   it("explains a stale message id", async () => {
-    const { text, isError } = await call(client, "read_email", { account: "BoxCart", id: 1 });
+    const { text, isError } = await call(client, "read_email", { account: "Support", id: 1 });
     assert.equal(isError, true);
     assert.match(text, /There's no message with id 1 in INBOX/);
   });
@@ -340,14 +340,14 @@ describe("sending enabled", () => {
 
   it("sends mail without leaking Bcc and files a copy in Sent", async () => {
     const { text, isError } = await call(client, "send_email", {
-      account: "BoxCart",
+      account: "Support",
       to: ["sam@example.com"],
       bcc: ["accounts@example.com"],
       subject: "Your order",
       body: "It's on the way.",
     });
     assert.equal(isError, false, text);
-    assert.match(text, /Sent from hello@boxcart\.test; a copy is saved in Sent\./);
+    assert.match(text, /Sent from support@example\.test; a copy is saved in Sent\./);
 
     const last = delivered.at(-1);
     assert.deepEqual(last.envelope.rcptTo.map((r) => r.address).sort(), ["accounts@example.com", "sam@example.com"]);
@@ -358,9 +358,9 @@ describe("sending enabled", () => {
   });
 
   it("sends a threaded reply and marks the original answered", async () => {
-    const { text, isError } = await call(client, "send_reply", { account: "BoxCart", id: 2, body: "Following up!" });
+    const { text, isError } = await call(client, "send_reply", { account: "Support", id: 2, body: "Following up!" });
     assert.equal(isError, false, text);
-    assert.match(text, /Reply sent from hello@boxcart\.test/);
+    assert.match(text, /Reply sent from support@example\.test/);
     assert.match(delivered.at(-1).raw, /^In-Reply-To: <q1@example\.com>/m);
     const original = (await folderContents("INBOX")).find((m) => m.uid === 2);
     assert.ok(original.flags.has("\\Answered"));
@@ -376,8 +376,8 @@ describe("passwords from a command (e.g. the macOS Keychain)", () => {
       SPACEMAIL_2_PASSWORD_COMMAND: "echo 'item not found' >&2; exit 44",
     });
     const { text } = await call(client, "test_connection");
-    assert.match(text, /✓ BoxCart <hello@boxcart\.test>: connected/);
-    assert.match(text, /Couldn't get the password for hello@speakeasy\.test from its PASSWORD_COMMAND: item not found/);
+    assert.match(text, /✓ Support <support@example\.test>: connected/);
+    assert.match(text, /Couldn't get the password for sales@example\.test from its PASSWORD_COMMAND: item not found/);
     await client.close();
   });
 });

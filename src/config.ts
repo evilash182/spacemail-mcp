@@ -11,13 +11,13 @@ import { execSync } from "node:child_process";
 export const MAX_ACCOUNTS = 20;
 
 export interface Account {
-  /** Short lowercase handle, e.g. "boxcart". */
+  /** Short lowercase handle, e.g. "support". */
   id: string;
-  /** Friendly name shown to Claude and the user, e.g. "BoxCart". */
+  /** Friendly name shown to Claude and the user, e.g. "Support". */
   label: string;
   email: string;
   password: string;
-  /** Display name used in the From header, e.g. "BoxCart Support". */
+  /** Display name used in the From header, e.g. "Your Business Support". */
   senderName?: string;
 }
 

@@ -20,13 +20,13 @@
 
 Spacemail is the affordable business email from Spaceship. This extension connects it to Claude (and any other app that supports the [Model Context Protocol](https://modelcontextprotocol.io)), so you can just ask:
 
-> "Has anything come in on BoxCart today?"
+> "Has anything come in on the support inbox today?"
 >
-> "Find the email from Jane about delivery zones and draft a friendly reply."
+> "Find the customer email about a late delivery and draft a friendly reply."
 >
 > "Summarise this week's unread mail across all my inboxes."
 >
-> "Archive all the Stripe receipts from October."
+> "Archive all the payment receipts from October."
 
 ## Why this one
 
@@ -43,7 +43,7 @@ Spacemail is the affordable business email from Spaceship. This extension connec
 
 1. Download **[spacemail.mcpb](https://github.com/evilash182/spacemail-mcp/releases/latest/download/spacemail.mcpb)** (from the [latest release](https://github.com/evilash182/spacemail-mcp/releases/latest)).
 2. Double-click it. Claude Desktop opens and shows an install screen.
-3. Enter your Spacemail address and password, and optionally a nickname like "BoxCart". Add up to three mailboxes.
+3. Enter your Spacemail address and password, and optionally a nickname like "Support". Add up to three mailboxes.
 4. Click **Install**. It appears as **Spacemail by NWD** in your extensions. Then ask Claude: *"Test my Spacemail connection."*
 
 ### Claude Code
@@ -109,14 +109,14 @@ Number each mailbox from 1. Nicknames are how you'll refer to them when talking 
 
 ```json
 "env": {
-  "SPACEMAIL_1_EMAIL": "hello@boxcart.dev",
+  "SPACEMAIL_1_EMAIL": "support@yourbusiness.com",
   "SPACEMAIL_1_PASSWORD": "…",
-  "SPACEMAIL_1_LABEL": "BoxCart",
-  "SPACEMAIL_1_NAME": "BoxCart Support",
+  "SPACEMAIL_1_LABEL": "Support",
+  "SPACEMAIL_1_NAME": "Your Business Support",
 
-  "SPACEMAIL_2_EMAIL": "hello@speakeasy.app",
+  "SPACEMAIL_2_EMAIL": "sales@yourbusiness.com",
   "SPACEMAIL_2_PASSWORD": "…",
-  "SPACEMAIL_2_LABEL": "Speakeasy"
+  "SPACEMAIL_2_LABEL": "Sales"
 }
 ```
 

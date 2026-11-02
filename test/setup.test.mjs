@@ -24,7 +24,7 @@ function keychainPassword(account) {
 }
 
 function cleanKeychain() {
-  for (const account of ["hello@boxcart.test", "hello@speakeasy.test"]) {
+  for (const account of ["support@example.test", "sales@example.test"]) {
     spawnSync("security", ["delete-generic-password", "-s", SERVICE, "-a", account], { stdio: "ignore" });
   }
 }
@@ -37,7 +37,7 @@ describe("setup wizard", { skip: !runnable && "needs macOS and expect" }, () => 
   before(async () => {
     cleanKeychain();
     imap = hoodiecrow({
-      users: { "hello@boxcart.test": { password: "correct-horse" }, "hello@speakeasy.test": { password: "second-pass" } },
+      users: { "support@example.test": { password: "correct-horse" }, "sales@example.test": { password: "second-pass" } },
       storage: {
         INBOX: {
           messages: [
@@ -85,34 +85,34 @@ describe("setup wizard", { skip: !runnable && "needs macOS and expect" }, () => 
     assert.equal(server.command, process.execPath);
     assert.deepEqual(server.args, [resolve("dist/index.cjs")]);
     assert.deepEqual(server.env, {
-      SPACEMAIL_1_EMAIL: "hello@boxcart.test",
-      SPACEMAIL_1_PASSWORD_COMMAND: `security find-generic-password -s ${SERVICE} -a 'hello@boxcart.test' -w`,
-      SPACEMAIL_1_LABEL: "BoxCart",
-      SPACEMAIL_1_NAME: "BoxCart",
-      SPACEMAIL_2_EMAIL: "hello@speakeasy.test",
-      SPACEMAIL_2_PASSWORD_COMMAND: `security find-generic-password -s ${SERVICE} -a 'hello@speakeasy.test' -w`,
-      SPACEMAIL_2_LABEL: "Speak Easy",
-      SPACEMAIL_2_NAME: "Learn to Speak Easy",
+      SPACEMAIL_1_EMAIL: "support@example.test",
+      SPACEMAIL_1_PASSWORD_COMMAND: `security find-generic-password -s ${SERVICE} -a 'support@example.test' -w`,
+      SPACEMAIL_1_LABEL: "Support",
+      SPACEMAIL_1_NAME: "Support",
+      SPACEMAIL_2_EMAIL: "sales@example.test",
+      SPACEMAIL_2_PASSWORD_COMMAND: `security find-generic-password -s ${SERVICE} -a 'sales@example.test' -w`,
+      SPACEMAIL_2_LABEL: "Sales",
+      SPACEMAIL_2_NAME: "Example Sales Team",
     });
     assert.ok(!JSON.stringify(server).includes("correct-horse"), "password must not be written to the config");
-    assert.equal(keychainPassword("hello@boxcart.test"), "correct-horse");
-    assert.equal(keychainPassword("hello@speakeasy.test"), "second-pass");
+    assert.equal(keychainPassword("support@example.test"), "correct-horse");
+    assert.equal(keychainPassword("sales@example.test"), "second-pass");
   });
 
   it("lets `check` use the saved settings", async () => {
     const { stdout: out } = await promisify(execFile)(process.execPath, ["dist/index.cjs", "check"], { env, encoding: "utf8" });
     assert.match(out, /Using the mailboxes saved in Claude Code/);
-    assert.match(out, /✓ BoxCart <hello@boxcart\.test>: 2 messages, 1 unread/);
-    assert.match(out, /✓ Speak Easy <hello@speakeasy\.test>/);
+    assert.match(out, /✓ Support <support@example\.test>: 2 messages, 1 unread/);
+    assert.match(out, /✓ Sales <sales@example\.test>/);
   });
 
   it("removes a mailbox and its Keychain entry on a second run", async () => {
     const result = await expectScript("setup-remove.exp");
     assert.equal(result.status, 0, `expect stopped at step ${result.status}\n${result.stdout}${result.stderr}`);
     const server = config();
-    assert.equal(server.env.SPACEMAIL_1_EMAIL, "hello@boxcart.test");
+    assert.equal(server.env.SPACEMAIL_1_EMAIL, "support@example.test");
     assert.equal(server.env.SPACEMAIL_2_EMAIL, undefined);
-    assert.equal(keychainPassword("hello@speakeasy.test"), undefined);
-    assert.equal(keychainPassword("hello@boxcart.test"), "correct-horse");
+    assert.equal(keychainPassword("sales@example.test"), undefined);
+    assert.equal(keychainPassword("support@example.test"), "correct-horse");
   });
 });
