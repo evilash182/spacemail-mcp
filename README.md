@@ -6,7 +6,7 @@
 
 <p align="center">
   Let Claude check, search, read and draft replies in your <a href="https://www.spaceship.com/email/">Spacemail</a> inboxes.<br>
-  Built by <a href="https://norwichwebsite.design">Norwich Website Design</a>.
+  Built by <a href="https://norwichwebsite.design">Norwich Website Design</a> · <a href="https://norwichwebsite.design/tools/spacemail-for-claude/">Product page and setup guide</a>
 </p>
 
 <p align="center">
