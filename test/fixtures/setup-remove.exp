@@ -1,0 +1,13 @@
+# Existing setup: remove the second mailbox, then save.
+set timeout 20
+log_user 0
+spawn node dist/index.cjs setup
+expect "Your mailboxes:" {} timeout { exit 30 }
+expect "Learn to Speak Easy" {} timeout { exit 31 }
+# Menu: Add, Change password, Rename, Remove, Sending, Finish, Quit
+expect "What would you like to do?" { send "\033\[B\033\[B\033\[B\r" } timeout { exit 32 }
+expect "Which mailbox should Claude stop using?" { send "\033\[B\r" } timeout { exit 33 }
+expect "Remove hello@speakeasy.test?" { send "y\r" } timeout { exit 34 }
+expect "What would you like to do?" { send "\033\[B\033\[B\033\[B\033\[B\033\[B\r" } timeout { exit 35 }
+expect "Saved." {} timeout { exit 36 }
+expect eof

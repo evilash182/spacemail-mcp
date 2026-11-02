@@ -48,32 +48,37 @@ Spacemail is the affordable business email from Spaceship. This extension connec
 
 ### Claude Code
 
+Run the setup wizard in Terminal:
+
 ```bash
-claude mcp add spacemail \
-  -e SPACEMAIL_EMAIL=hello@yourbusiness.com \
-  -e SPACEMAIL_PASSWORD='your-mailbox-password' \
-  -- npx -y spacemail-mcp
+npx -y spacemail-mcp setup
+```
+
+It asks for your Spacemail address and password, checks they work straight away, and then asks **"Would you like to add another mailbox?"** When you're done it connects Claude Code for all your projects. On a Mac your passwords go into the Keychain, not into a config file.
+
+Run the same command again any time to add, rename or remove mailboxes, change a password, or turn sending on or off. To check everything's working:
+
+```bash
+npx -y spacemail-mcp check
 ```
 
 <details>
-<summary><b>Keep passwords out of config files (macOS Keychain)</b></summary>
-
-Instead of `SPACEMAIL_PASSWORD`, set `SPACEMAIL_PASSWORD_COMMAND` to a command that prints the password. On a Mac, save the password in your Keychain once (you'll be asked to type it):
-
-```bash
-security add-generic-password -s spacemail-mcp -a hello@yourbusiness.com -w
-```
-
-Then add the server without the password in it:
+<summary><b>Prefer to set it up by hand?</b></summary>
 
 ```bash
 claude mcp add spacemail -s user \
   -e SPACEMAIL_EMAIL=hello@yourbusiness.com \
-  -e SPACEMAIL_PASSWORD_COMMAND='security find-generic-password -s spacemail-mcp -a hello@yourbusiness.com -w' \
-  -- npx -y spacemail-mcp
+  -e SPACEMAIL_PASSWORD='your-mailbox-password' \
+  -- npx -y spacemail-mcp@latest
 ```
 
-The same works with any password manager that has a command-line tool, e.g. `op read "op://Private/Spacemail/password"` for 1Password.
+To keep the password out of the config, use `SPACEMAIL_PASSWORD_COMMAND` instead: a command that prints the password. For example, after saving it in the macOS Keychain with `security add-generic-password -s spacemail-mcp -a hello@yourbusiness.com -w`:
+
+```bash
+-e SPACEMAIL_PASSWORD_COMMAND="security find-generic-password -s spacemail-mcp -a 'hello@yourbusiness.com' -w"
+```
+
+Any password manager with a command-line tool works the same way, e.g. `op read "op://Private/Spacemail/password"` for 1Password.
 
 </details>
 
@@ -86,7 +91,7 @@ Add this to the app's MCP configuration:
   "mcpServers": {
     "spacemail": {
       "command": "npx",
-      "args": ["-y", "spacemail-mcp"],
+      "args": ["-y", "spacemail-mcp@latest"],
       "env": {
         "SPACEMAIL_EMAIL": "hello@yourbusiness.com",
         "SPACEMAIL_PASSWORD": "your-mailbox-password"
@@ -96,7 +101,7 @@ Add this to the app's MCP configuration:
 }
 ```
 
-Requires [Node.js](https://nodejs.org) 20 or newer (Claude Desktop includes its own).
+Requires [Node.js](https://nodejs.org) 20.17 or newer (Claude Desktop includes its own).
 
 ## Connecting several mailboxes
 
@@ -123,11 +128,7 @@ Use the **mailbox password**, the one you use to log in to Spacemail webmail. It
 
 If you've forgotten it, you can reset it from **Spacemail Manager** in your Spaceship dashboard. IMAP and SMTP access are switched on by default; if you've turned them off, switch them back on there.
 
-You can check your settings from Terminal at any time:
-
-```bash
-SPACEMAIL_EMAIL=hello@yourbusiness.com SPACEMAIL_PASSWORD='…' npx -y spacemail-mcp check
-```
+If you used the setup wizard, `npx -y spacemail-mcp check` tests your saved mailboxes at any time.
 
 ## What Claude can do
 

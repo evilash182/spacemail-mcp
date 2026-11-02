@@ -39,7 +39,7 @@ export interface Config {
   warnings: string[];
 }
 
-type Env = Record<string, string | undefined>;
+export type Env = Record<string, string | undefined>;
 
 /** Treats blanks and unfilled template placeholders (e.g. "${user_config.x}") as unset. */
 function read(env: Env, key: string): string | undefined {
@@ -48,7 +48,7 @@ function read(env: Env, key: string): string | undefined {
   return value;
 }
 
-function readBool(env: Env, key: string, fallback: boolean): boolean {
+export function readBool(env: Env, key: string, fallback: boolean): boolean {
   const value = read(env, key)?.toLowerCase();
   if (value === undefined) return fallback;
   return ["1", "true", "yes", "on"].includes(value);
@@ -91,69 +91,98 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-function defaultLabel(email: string): string {
+export function defaultLabel(email: string): string {
   const domain = email.split("@")[1] ?? email;
   const name = domain.split(".")[0] ?? domain;
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
-export function loadConfig(env: Env = process.env): Config {
-  const warnings: string[] = [];
-  const accounts: Account[] = [];
-
-  const prefixes = ["SPACEMAIL_"];
-  for (let i = 1; i <= MAX_ACCOUNTS; i++) prefixes.push(`SPACEMAIL_${i}_`);
-
-  for (const prefix of prefixes) {
-    const email = read(env, `${prefix}EMAIL`) ?? read(env, `${prefix}USER`);
-    const passwordCommand = read(env, `${prefix}PASSWORD_COMMAND`);
-    if (!email && !read(env, `${prefix}PASSWORD`) && !passwordCommand) continue;
-    if (!email) {
-      warnings.push(`${prefix}PASSWORD is set but ${prefix}EMAIL is missing, so that mailbox was skipped.`);
-      continue;
-    }
-    let password = read(env, `${prefix}PASSWORD`);
-    if (!password && passwordCommand) {
-      try {
-        password = runPasswordCommand(passwordCommand);
-      } catch (err) {
-        warnings.push(`Couldn't get the password for ${email} from ${prefix}PASSWORD_COMMAND: ${(err as Error).message}`);
-        continue;
-      }
-    }
-    if (!password) {
-      warnings.push(`${email} has no password (${prefix}PASSWORD or ${prefix}PASSWORD_COMMAND), so it was skipped.`);
-      continue;
-    }
-    if (!email.includes("@")) {
-      warnings.push(`"${email}" doesn't look like an email address, so it was skipped.`);
-      continue;
-    }
-
-    const label = read(env, `${prefix}LABEL`) ?? defaultLabel(email);
-    let id = slugify(label) || slugify(email);
-    // Two mailboxes on the same domain would otherwise share an id.
-    if (accounts.some((a) => a.id === id)) id = slugify(email);
-
-    if (accounts.some((a) => a.email.toLowerCase() === email.toLowerCase())) {
-      warnings.push(`${email} is configured twice; only the first one is used.`);
-      continue;
-    }
-
-    accounts.push({ id, label, email, password, senderName: read(env, `${prefix}NAME`) });
-  }
-
-  const server: ServerSettings = {
+export function readServerSettings(env: Env, warnings: string[] = []): ServerSettings {
+  return {
     imapHost: read(env, "SPACEMAIL_IMAP_HOST") ?? "mail.spacemail.com",
     imapPort: readPort(env, "SPACEMAIL_IMAP_PORT", 993, warnings),
     smtpHost: read(env, "SPACEMAIL_SMTP_HOST") ?? "mail.spacemail.com",
     smtpPort: readPort(env, "SPACEMAIL_SMTP_PORT", 465, warnings),
     insecure: readBool(env, "SPACEMAIL_INSECURE_PLAINTEXT", false),
   };
+}
+
+/** A mailbox as written in the settings, before its password has been looked up. */
+export interface MailboxEntry {
+  email: string;
+  password?: string;
+  passwordCommand?: string;
+  label?: string;
+  senderName?: string;
+}
+
+/**
+ * Lists the mailboxes in the settings in order, without running any password commands,
+ * so setup can show what's configured without touching the keychain.
+ */
+export function readMailboxEntries(env: Env, warnings: string[] = []): MailboxEntry[] {
+  const entries: MailboxEntry[] = [];
+  const prefixes = ["SPACEMAIL_"];
+  for (let i = 1; i <= MAX_ACCOUNTS; i++) prefixes.push(`SPACEMAIL_${i}_`);
+
+  for (const prefix of prefixes) {
+    const email = read(env, `${prefix}EMAIL`) ?? read(env, `${prefix}USER`);
+    const password = read(env, `${prefix}PASSWORD`);
+    const passwordCommand = read(env, `${prefix}PASSWORD_COMMAND`);
+    if (!email && !password && !passwordCommand) continue;
+    if (!email) {
+      warnings.push(`${prefix}PASSWORD is set but ${prefix}EMAIL is missing, so that mailbox was skipped.`);
+      continue;
+    }
+    if (!email.includes("@")) {
+      warnings.push(`"${email}" doesn't look like an email address, so it was skipped.`);
+      continue;
+    }
+    if (entries.some((e) => e.email.toLowerCase() === email.toLowerCase())) {
+      warnings.push(`${email} is configured twice; only the first one is used.`);
+      continue;
+    }
+    entries.push({
+      email,
+      password,
+      passwordCommand,
+      label: read(env, `${prefix}LABEL`),
+      senderName: read(env, `${prefix}NAME`),
+    });
+  }
+  return entries;
+}
+
+export function loadConfig(env: Env = process.env): Config {
+  const warnings: string[] = [];
+  const accounts: Account[] = [];
+
+  for (const entry of readMailboxEntries(env, warnings)) {
+    let password = entry.password;
+    if (!password && entry.passwordCommand) {
+      try {
+        password = runPasswordCommand(entry.passwordCommand);
+      } catch (err) {
+        warnings.push(`Couldn't get the password for ${entry.email} from its PASSWORD_COMMAND: ${(err as Error).message}`);
+        continue;
+      }
+    }
+    if (!password) {
+      warnings.push(`${entry.email} has no password (PASSWORD or PASSWORD_COMMAND), so it was skipped.`);
+      continue;
+    }
+
+    const label = entry.label ?? defaultLabel(entry.email);
+    let id = slugify(label) || slugify(entry.email);
+    // Two mailboxes on the same domain would otherwise share an id.
+    if (accounts.some((a) => a.id === id)) id = slugify(entry.email);
+
+    accounts.push({ id, label, email: entry.email, password, senderName: entry.senderName });
+  }
 
   return {
     accounts,
-    server,
+    server: readServerSettings(env, warnings),
     allowSend: readBool(env, "SPACEMAIL_ALLOW_SEND", false),
     saveSent: readBool(env, "SPACEMAIL_SAVE_SENT", true),
     warnings,

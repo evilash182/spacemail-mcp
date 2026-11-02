@@ -38,17 +38,18 @@
     "LICENSE"
   ],
   "engines": {
-    "node": ">=20"
+    "node": ">=20.17"
   },
   "scripts": {
     "build": "node build.mjs",
     "typecheck": "tsc -p .",
-    "test": "npm run build && node --test --test-timeout=30000 test/e2e.test.mjs",
+    "test": "npm run build && node --test --test-timeout=90000 test/e2e.test.mjs test/setup.test.mjs",
     "build:extension": "npm run build && node build-extension.mjs",
     "prepublishOnly": "npm run typecheck && npm test"
   },
   "devDependencies": {
     "@anthropic-ai/mcpb": "^2.1.2",
+    "@inquirer/prompts": "^8.7.5",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "@types/mailparser": "^3.9.0",
     "@types/node": "^26.6.6",

@@ -1,7 +1,9 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { loadConfig } from "./config.js";
+import { readClaudeCodeEnv } from "./claude-code.js";
+import { loadConfig, readMailboxEntries } from "./config.js";
 import { inboxStatus, withImap } from "./mail.js";
+import { runSetup } from "./setup.js";
 import { registerTools } from "./tools.js";
 
 declare const __VERSION__: string;
@@ -12,8 +14,9 @@ Connects Claude (and other MCP apps) to Spacemail mailboxes from Spaceship.
 Built by Norwich Website Design: https://norwichwebsite.design
 
 Usage:
+  spacemail-mcp setup     Set up or change your mailboxes for Claude Code (start here)
+  spacemail-mcp check     Test that your mailboxes connect
   spacemail-mcp           Start the MCP server (this is what Claude runs)
-  spacemail-mcp check     Test your mailbox settings from the terminal
   spacemail-mcp --help    Show this help
 
 Settings (environment variables):
@@ -40,11 +43,14 @@ function instructions(labels: string, allowSend: boolean): string {
 }
 
 async function check(): Promise<void> {
-  const config = loadConfig();
+  // After `setup` the settings live in Claude Code's config rather than this shell, so use those.
+  const saved = readMailboxEntries(process.env).length === 0 ? readClaudeCodeEnv() : undefined;
+  const config = loadConfig(saved ? { ...saved, ...process.env } : process.env);
+  if (saved) console.log("Using the mailboxes saved in Claude Code.");
   console.log(`spacemail-mcp ${VERSION}: checking ${config.accounts.length} mailbox(es) on ${config.server.imapHost}\n`);
   for (const warning of config.warnings) console.log(`! ${warning}`);
   if (config.accounts.length === 0) {
-    console.log("No mailboxes configured. Set SPACEMAIL_EMAIL and SPACEMAIL_PASSWORD, then try again.");
+    console.log("No mailboxes set up yet. Run `npx -y spacemail-mcp setup` to add one.");
     process.exitCode = 1;
     return;
   }
@@ -65,6 +71,7 @@ async function main(): Promise<void> {
   if (arg === "--help" || arg === "-h" || arg === "help") return void process.stdout.write(HELP);
   if (arg === "--version" || arg === "-v") return void console.log(VERSION);
   if (arg === "check") return check();
+  if (arg === "setup") return runSetup();
 
   const config = loadConfig();
   // stdout carries the MCP protocol, so anything human-readable goes to stderr.

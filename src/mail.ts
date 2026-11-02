@@ -54,9 +54,9 @@ export function explainConnectionError(err: unknown, account: Account, server: S
   if (e.code === "ENOTFOUND" || e.code === "EAI_AGAIN") {
     return new FriendlyError(`Couldn't reach ${server.imapHost}. Check this computer is online.`);
   }
-  if (e.code === "ETIMEDOUT" || e.code === "ECONNREFUSED" || e.code === "ECONNRESET") {
+  if (/greeting/i.test(e.message ?? "") || e.code === "ETIMEDOUT" || e.code === "ECONNREFUSED" || e.code === "ECONNRESET") {
     return new FriendlyError(
-      `Couldn't connect to ${server.imapHost}:${server.imapPort} for ${where} (${e.code}). ` +
+      `Couldn't connect to ${server.imapHost}:${server.imapPort} for ${where}${e.code ? ` (${e.code})` : ""}. ` +
         `A firewall or VPN may be blocking email ports, or Spacemail may be briefly unavailable.`,
     );
   }

@@ -1,0 +1,23 @@
+# Fresh setup: wrong password first, then two mailboxes, sending left off.
+set timeout 20
+log_user 0
+spawn node dist/index.cjs setup
+expect "Spacemail address:" { send "hello@boxcart.test\r" } timeout { exit 10 }
+expect "Mailbox password for hello@boxcart.test" { send "wrong-password\r" } timeout { exit 11 }
+expect "rejected the email address or password" {} timeout { exit 12 }
+expect "What would you like to do?" { send "\r" } timeout { exit 13 }
+expect "Mailbox password for hello@boxcart.test" { send "correct-horse\r" } timeout { exit 14 }
+expect "Connected: 2 messages, 1 unread" {} timeout { exit 15 }
+expect "Nickname" { send "BoxCart\r" } timeout { exit 16 }
+expect "Sender name" { send "\r" } timeout { exit 17 }
+expect "add another mailbox" { send "y\r" } timeout { exit 18 }
+expect "Spacemail address:" { send "hello@speakeasy.test\r" } timeout { exit 19 }
+expect "Mailbox password for hello@speakeasy.test" { send "second-pass\r" } timeout { exit 20 }
+expect "Connected:" {} timeout { exit 21 }
+expect "Nickname" { send "Speak Easy\r" } timeout { exit 22 }
+expect "Sender name" { send "Learn to Speak Easy\r" } timeout { exit 23 }
+expect "add another mailbox" { send "n\r" } timeout { exit 24 }
+expect "send emails directly" { send "\r" } timeout { exit 25 }
+expect "Saved." {} timeout { exit 26 }
+expect "Passwords are stored in your Mac's Keychain" {} timeout { exit 27 }
+expect eof

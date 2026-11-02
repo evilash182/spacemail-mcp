@@ -111,7 +111,7 @@
       "linux"
     ],
     "runtimes": {
-      "node": ">=20.0.0"
+      "node": ">=20.17.0"
     }
   },
   "user_config": {

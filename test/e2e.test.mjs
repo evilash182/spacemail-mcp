@@ -377,7 +377,7 @@ describe("passwords from a command (e.g. the macOS Keychain)", () => {
     });
     const { text } = await call(client, "test_connection");
     assert.match(text, /✓ BoxCart <hello@boxcart\.test>: connected/);
-    assert.match(text, /Couldn't get the password for hello@speakeasy\.test from SPACEMAIL_2_PASSWORD_COMMAND: item not found/);
+    assert.match(text, /Couldn't get the password for hello@speakeasy\.test from its PASSWORD_COMMAND: item not found/);
     await client.close();
   });
 });
